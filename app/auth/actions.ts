@@ -17,7 +17,7 @@ export async function login(formData: FormData) {
 
     if (error) {
         logger.error('Login failed', { email }, error);
-        return { error: error.message };
+        redirect(`/login?error=${encodeURIComponent(error.message)}`);
     }
 
     revalidatePath('/', 'layout');
@@ -41,7 +41,7 @@ export async function signup(formData: FormData) {
 
     if (error) {
         logger.error('Signup failed', { email }, error);
-        return { error: error.message };
+        redirect(`/signup?error=${encodeURIComponent(error.message)}`);
     }
 
     revalidatePath('/', 'layout');

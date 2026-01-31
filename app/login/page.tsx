@@ -47,7 +47,6 @@ export default function LoginPage() {
                             />
                         </div>
                     </div>
-
                     <div>
                         <button
                             type="submit"

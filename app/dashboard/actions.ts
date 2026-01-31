@@ -1,5 +1,4 @@
 'use server';
-
 import { createClient } from '@/lib/supabase-server';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
@@ -8,7 +7,7 @@ import { createApiKeySchema } from '@/lib/validators';
 export async function generateApiKey(formData: FormData) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
-
+    
     if (!user) {
         return { error: 'Unauthorized' };
     }
@@ -20,7 +19,7 @@ export async function generateApiKey(formData: FormData) {
     // Validate input
     const validation = createApiKeySchema.safeParse({ name, expires_in_days: expiresInDays });
     if (!validation.success) {
-        return { error: validation.error.errors[0].message };
+        return { error: validation.error.issues[0].message };
     }
 
     // Call the database function
@@ -36,7 +35,7 @@ export async function generateApiKey(formData: FormData) {
     }
 
     revalidatePath('/dashboard/api-keys');
-
+    
     // Return the full key to show to the user (ONLY ONCE)
     return {
         success: true,
@@ -48,7 +47,7 @@ export async function generateApiKey(formData: FormData) {
 export async function revokeApiKey(keyId: string) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
-
+    
     if (!user) {
         return { error: 'Unauthorized' };
     }
@@ -69,7 +68,7 @@ export async function revokeApiKey(keyId: string) {
 export async function updateLeadStatus(leadId: string, newStatus: string, currentVersion: number) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
-
+    
     if (!user) return { error: 'Unauthorized' };
 
     const { data, error } = await supabase.rpc('update_lead_status', {
